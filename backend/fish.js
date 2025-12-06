@@ -4,57 +4,71 @@ import {
     FISH_MAX_POS 
 } from "../frontend/public/globals.js";
 
-export default function Fish(ws, speed, swappedDirectionCallback) {
+export default function Fish(ws, speed, onDirectionSwap) {
     let lastSwapPosition;
     let lastSwapAt;
     let direction;
 
-    let fishTimer;
+    let timer;
 
-    const _sendToWs = (lastSwapPosition, lastSwapAt, direction, speed) => {
-        ws.send(JSON.stringify({'type' : 'fishInfo', 'data' : {lastSwapPosition, lastSwapAt, direction, speed}}));
-    }
+    const sendState = () => {
+        ws.send(JSON.stringify({
+            type: "fishInfo",
+            data: { lastSwapPosition, lastSwapAt, direction, speed }
+        }));
+    };
+
+    const swapDirection = () => {
+        lastSwapPosition = computeFishCurrentPosition(
+            direction,
+            lastSwapAt,
+            lastSwapPosition,
+            speed
+        );
+
+        lastSwapAt = Date.now();
+        direction = direction === "down" ? "up" : "down";
+
+        sendState();
+        onDirectionSwap(direction, lastSwapAt, lastSwapPosition);
+    };
+
+    const scheduleNextSwap = () => {
+        const delay = computeFishTimeToNextSwap(direction, lastSwapPosition, speed);
+
+        timer = setTimeout(() => {
+            swapDirection();
+            scheduleNextSwap();
+        }, delay);
+    };
 
     const start = () => {
         lastSwapPosition = Math.floor(Math.random() * FISH_MAX_POS);
         lastSwapAt = Date.now();
         direction = "down";
-        _sendToWs(lastSwapPosition, lastSwapAt, direction, speed);
-        swappedDirectionCallback(direction, lastSwapAt, lastSwapPosition);
-        directionSwapTimer();
-    }
 
-    const directionSwapTimer = () => {
-        const timeToNextSwap = computeFishTimeToNextSwap(direction, lastSwapPosition, speed);
+        sendState();
+        onDirectionSwap(direction, lastSwapAt, lastSwapPosition);
 
-        fishTimer = setTimeout(() => {
-            lastSwapPosition = computeFishCurrentPosition(direction, lastSwapAt, lastSwapPosition, speed);
-            lastSwapAt = Date.now();
-            (direction === "down") ? direction = "up" : direction = "down";
-            _sendToWs(lastSwapPosition, lastSwapAt, direction, speed);
-            swappedDirectionCallback(direction, lastSwapAt, lastSwapPosition);
-            directionSwapTimer();
-        }, timeToNextSwap);
-    }
+        scheduleNextSwap();
+    };
 
-    const getInfo = () => {
-        return {
-            direction,
-            lastSwapAt,
-            lastSwapPosition
-        }
-    }
+    const getInfo = () => ({
+        direction,
+        lastSwapAt,
+        lastSwapPosition
+    });
 
     const finish = () => {
-        if (fishTimer !== undefined) {
-            clearTimeout(fishTimer);
-            fishTimer = undefined;
+        if (timer) {
+            clearTimeout(timer);
+            timer = undefined;
         }
-    }
+    };
 
     return {
-        start, 
+        start,
         getInfo,
         finish
-    }
+    };
 }

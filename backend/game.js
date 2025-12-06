@@ -1,46 +1,52 @@
 import CatchingMinigame from "./catching_minigame.js";
 import { 
-    ATTEMPTS_DIFFICULTY, 
-    FISH_BIT_TIMEOUT_MS, 
-    PULL_ROD_TIMEOUT_MS 
+    ATTEMPTS_DIFFICULTY,
+    FISH_BIT_TIMEOUT_MS,
+    PULL_ROD_TIMEOUT_MS
 } from "../frontend/public/globals.js";
 
 export default function Game(ws) {
-    let playerState = "standing"; 
-    let attemptNumber = 0; 
+    let playerState = "standing";
+    let attemptNumber = 0;
 
-    let catchingMinigame = CatchingMinigame(ws, () => {
+    const catchingMinigame = CatchingMinigame(ws, () => {
         playerState = "standing";
-    })
+    });
 
-    let biteTimer, escapeTimer;
-    let waitForBiteResolver, waitForBiteRejecter;
+    let biteTimer;
+    let escapeTimer;
+    let resolveBite;
+    let rejectBite;
+
+    const setState = (state) => {
+        playerState = state;
+    };
+
+    const clearBiteHandlers = () => {
+        resolveBite = undefined;
+        rejectBite = undefined;
+    };
 
     const castLine = () => {
-        if (playerState !== "standing") {
-            return playerState;
-        }
+        if (playerState !== "standing") return playerState;
 
-        playerState = "line_cast";
+        setState("line_cast");
 
         biteTimer = setTimeout(() => {
-            playerState = "fish_bit";
+            setState("fish_bit");
 
-            if (waitForBiteResolver) {
-                waitForBiteResolver();
-            }
+            if (resolveBite) resolveBite();
 
             escapeTimer = setTimeout(() => {
-                playerState = "standing";
+                setState("standing");
+                if (rejectBite) rejectBite(playerState);
+                clearBiteHandlers();
+            }, PULL_ROD_TIMEOUT_MS);
 
-                if (waitForBiteRejecter) {
-                    waitForBiteRejecter(playerState);
-                }
-            }, PULL_ROD_TIMEOUT_MS)
-        }, FISH_BIT_TIMEOUT_MS)
+        }, FISH_BIT_TIMEOUT_MS);
 
         return null;
-    }
+    };
 
     const waitForBite = () => {
         if (playerState !== "line_cast") {
@@ -48,40 +54,43 @@ export default function Game(ws) {
         }
 
         return new Promise((resolve, reject) => {
-            waitForBiteResolver = resolve;
-            waitForBiteRejecter = reject;
+            resolveBite = resolve;
+            rejectBite = reject;
         });
-    }
+    };
 
     const reelIn = () => {
         if (playerState === "line_cast") {
-            playerState = "standing";
-            if (waitForBiteRejecter) {
-                waitForBiteRejecter(playerState);
-            }
+            setState("standing");
 
+            if (rejectBite) rejectBite(playerState);
             clearTimeout(biteTimer);
-        } else if (playerState === "fish_bit") {
-            playerState = "playing_minigame";
+            clearBiteHandlers();
 
-            const selectedDifficulty = ATTEMPTS_DIFFICULTY[attemptNumber];
-            catchingMinigame.start(selectedDifficulty);
-            attemptNumber = (attemptNumber + 1) % ATTEMPTS_DIFFICULTY.length;
-            clearTimeout(escapeTimer);
-
-            return {difficulty : selectedDifficulty};
+            return { errorCode: "standing" };
         }
 
-        return {errorCode : playerState};
-    }
+        if (playerState === "fish_bit") {
+            setState("playing_minigame");
+            clearTimeout(escapeTimer);
+            clearBiteHandlers();
 
-    const updateCatchBarDirection = (newDirection) => {
-        catchingMinigame.updateCatchBarDirection(newDirection);
-    }
+            const difficulty = ATTEMPTS_DIFFICULTY[attemptNumber];
+            catchingMinigame.start(difficulty);
 
-    const getCatchingMiniGameInfo = () => {
-        return catchingMinigame.getInfo();
-    }
+            attemptNumber = (attemptNumber + 1) % ATTEMPTS_DIFFICULTY.length;
+
+            return { difficulty };
+        }
+
+        return { errorCode: playerState };
+    };
+
+    const updateCatchBarDirection = (direction) => {
+        catchingMinigame.updateCatchBarDirection(direction);
+    };
+
+    const getCatchingMiniGameInfo = () => catchingMinigame.getInfo();
 
     return {
         castLine,
@@ -89,5 +98,5 @@ export default function Game(ws) {
         reelIn,
         updateCatchBarDirection,
         getCatchingMiniGameInfo,
-    }
+    };
 }

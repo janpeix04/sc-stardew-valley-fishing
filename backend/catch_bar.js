@@ -3,44 +3,44 @@ import {
     computeCatchBarCurrentPosition 
 } from '../frontend/public/globals.js'
 
-export default function CatchBar(ws, swappedDirectionCallback) {
+export default function CatchBar(ws, onDirectionSwap) {
     let lastSwapAt;
     let lastSwapPosition;
     let direction;
 
-    const _sendToWs = (lastSwapPosition, lastSwapAt, direction) => {
-        ws.send(JSON.stringify({'type' : 'catchBarInfo', 'data' : {lastSwapPosition, lastSwapAt, direction}}));
-    }
+    const sendState = () => {
+        ws.send(JSON.stringify({
+            type: 'catchBarInfo',
+            data: { lastSwapPosition, lastSwapAt, direction }
+        }));
+    };
+
+    const swapDirection = newDirection => {
+        direction = newDirection;
+        lastSwapAt = Date.now();
+        sendState();
+        onDirectionSwap(direction, lastSwapAt, lastSwapPosition);
+    };
 
     const start = () => {
-        lastSwapAt = Date.now();
         lastSwapPosition = CATCH_BAR_INITIAL_POSITION;
-        direction = "down";
-        _sendToWs(lastSwapPosition, lastSwapAt, direction);
-        swappedDirectionCallback(direction, lastSwapAt, lastSwapPosition);
-    }
+        lastSwapAt = Date.now();
+        swapDirection("down");
+    };
 
     const updateDirection = newDirection => {
-        if (newDirection !== direction) {
-            lastSwapPosition = computeCatchBarCurrentPosition(direction, lastSwapAt, lastSwapPosition);
-            lastSwapAt = Date.now();
-            direction = newDirection;
-            _sendToWs(lastSwapPosition, lastSwapAt, direction);
-            swappedDirectionCallback(direction, lastSwapAt, lastSwapPosition);
-        }
-    }
+        if (newDirection === direction) return;
 
-    const getInfo = () => {
-        return {
+        lastSwapPosition = computeCatchBarCurrentPosition(
             direction,
             lastSwapAt,
             lastSwapPosition
-        }
-    }
+        );
 
-    return {
-        start,
-        updateDirection,
-        getInfo
-    }
+        swapDirection(newDirection);
+    };
+
+    const getInfo = () => ({ direction, lastSwapAt, lastSwapPosition });
+
+    return { start, updateDirection, getInfo };
 }
