@@ -1,32 +1,39 @@
 <script>
 import BaseBackground from './components/BaseBackground.vue';
-import BaseActionButton from './components/BaseActionButton.vue';
-import BaseAttempt from './components/BaseAttempt.vue';
-import BaseCaptures from './components/BaseCaptures.vue';
-import BaseCatchBar from './components/BaseCatchBar.vue';
+import BasePlayer from './components/BasePlayer.vue';
 
 export default {
   components: {
     BaseBackground,
-    BaseActionButton,
-    BaseAttempt,
-    BaseCaptures,
-    BaseCatchBar
+    BasePlayer,
+  },
+  data() {
+    return {
+      playerState: 'standing',
+      capturedFish: '',
+      showFishDialog: false,
+      enableActionButton: true,
+    }
+  },
+  methods: {
+    handleAnimationFinished() {
+      this.enableActionButton = true;
+    },
+    handleShowingCaughtFish() {
+      this.showFishDialog = true;
+    },
   }
 }
 </script>
 
 <template>
   <BaseBackground />
-  <BaseActionButton :text="'start'" :disabled="false" />
-  <BaseCaptures>
-    <BaseAttempt :successful="true" :difficulty="'low'" />
-    <BaseAttempt :successful="true" :difficulty="'medium'" />
-    <BaseAttempt :successful="true" :difficulty="'high'" />
-    <BaseAttempt :successful="true" :difficulty="'legend'" />
-  </BaseCaptures>
-
-  <BaseCatchBar />
+  <BasePlayer
+    :state="playerState"
+    :captured-fish="capturedFish"
+    @animation-finished="handleAnimationFinished"
+    @showing-caught-fish="handleShowingCaughtFish"
+  />
 </template>
 
 <style>
