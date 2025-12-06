@@ -1,38 +1,43 @@
+<template>
+    <img id="catchBar" :src="catchBar" alt="catchBar" :style="innerStyle" ref="catchBar" />
+</template>
+
 <script>
-import CatchBar from '@/assets/img/catch_bar.png';
+import catchBar from '@/assets/img/catch_bar.png';
 import {
-    SCALE_FACTOR,
     CATCH_BAR_INITIAL_POSITION,
     CATCH_BAR_MAX_POS,
     CATCH_BAR_SPEED,
+    SCALE_FACTOR,
     computeCatchBarCurrentPosition,
     calculateAnimationDuration
-} from '../../public/globals';
+} from '@/../public/globals';
 
 const CATCH_BAR_PADDING_TOP = 7;
 
 export default {
+    name: "BaseCatchBar",
     props: {
         direction: {
             type: String,
-            default: null,
+            default: null
         },
         lastSwapPosition: {
             type: Number,
-            default: null,
+            default: null
         },
         lastSwapAt: {
             type: Number,
-            default: null,
+            default: null
         }
     },
     data() {
         return {
-            catchBar: CatchBar,
+            catchBar,
             SCALE_FACTOR,
             isAnimated: false,
             top: CATCH_BAR_INITIAL_POSITION,
-            correctedLastSwapPosition: null,
+            correctedLastSwapPosition: null
         };
     },
     methods: {
@@ -46,7 +51,7 @@ export default {
                 this.$nextTick(_ => this.recursivelyCheckTop(expectedValue, ticks + 1));
             } else {
                 this.isAnimated = true;
-                this.top = this.direction === 'up' ? CATCH_BAR_MAX_POS : 0;
+                this.top = this.direction === "up" ? CATCH_BAR_MAX_POS : 0;
             }
         }
     },
@@ -75,18 +80,14 @@ export default {
             }
         }
     }
-}
+};
 </script>
 
-<template>
-    <img id="catchBar" :src="catchBar" alt="Catch bar" :style="innerStyle" ref="catchBar">
-</template>
-
 <style scoped>
-    #catchBar {
-        position: absolute;
-        width: calc(9px * v-bind(SCALE_FACTOR));
-        height: calc(36px * v-bind(SCALE_FACTOR));
-        left: calc(21px * v-bind(SCALE_FACTOR));
-    }
+#catchBar {
+    position: absolute;
+    width: calc(9px * v-bind(SCALE_FACTOR));
+    height: calc(36px * v-bind(SCALE_FACTOR));
+    left: calc(21px * v-bind(SCALE_FACTOR));
+}
 </style>

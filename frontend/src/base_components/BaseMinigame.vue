@@ -1,44 +1,45 @@
+<template>
+    <div id="fishingPopupWrapper" :style="fishingPopupWrapperStyle">
+        <img id="fishingPopupBackgroud" :src="fishingPopup" alt="fishingPopup" />
+        <img id="spool" :src="spool" alt="spool" :class="spoolClass" />
+        <slot />
+    </div>
+</template>
+
 <script>
-import Spool from '@/assets/img/spool.png';
-import FishingPopup from '@/assets/img/fishing_popup.png';
-import { SCALE_FACTOR } from '../../public/globals';
+import spool from '@/assets/img/spool.png';
+import fishingPopup from '@/assets/img/fishing_popup.png';
+import { SCALE_FACTOR } from '@/../public/globals';
 
 export default {
+    name: "BaseMinigame",
     props: {
         visible: {
             type: Boolean,
-            required: true,
+            required: true
         },
         spoolRotationType: {
             type: String,
-            required: true,
+            required: true
         }
     },
     data() {
         return {
-            spool: Spool,
-            fishingPopup: FishingPopup,
+            spool,
+            fishingPopup,
             SCALE_FACTOR
-        }
+        };
     },
     computed: {
         fishingPopupWrapperStyle() {
-            return this.visible ? '' : 'opacity: 0;'
+            return this.visible ? '' : 'opacity: 0;';
         },
         spoolClass() {
-            return this.spoolRotationType === "clockwise" ? 'rotateClockWise' : 'rotateAntiClockWise';
+            return this.spoolRotationType === 'clockwise' ? 'rotateClockWise' : 'rotateAntiClockWise';
         }
     }
-}
+};
 </script>
-
-<template>
-    <div class="fishingPopupWrapper" :style="fishingPopupWrapperStyle">
-        <img id="fishingPopupBackground" :src="fishingPopup" alt="Fishing popup">
-        <img id="spool" :src="spool" alt="Spool" :class="spoolClass">
-        <slot></slot>
-    </div>
-</template>
 
 <style scoped>
 #fishingPopupWrapper {
@@ -47,13 +48,11 @@ export default {
     left: 530px;
     image-rendering: pixelated;
 }
-
-#fishingPopupBackground {
+#fishingPopupBackgroud {
     position: absolute;
     transform-origin: top left;
     transform: scale(v-bind(SCALE_FACTOR));
 }
-
 @keyframes rotateSpoolClockWise {
     from {
         transform: scale(v-bind(SCALE_FACTOR)) rotate(0deg);
@@ -62,7 +61,6 @@ export default {
         transform: scale(v-bind(SCALE_FACTOR)) rotate(360deg);
     }
 }
-
 @keyframes rotateSpoolAntiClockWise {
     from {
         transform: scale(v-bind(SCALE_FACTOR)) rotate(0deg);
@@ -71,18 +69,15 @@ export default {
         transform: scale(v-bind(SCALE_FACTOR)) rotate(-360deg);
     }
 }
-
 #spool {
     position: absolute;
     top: 522px;
     left: 37px;
     transform-origin: 50% 100%;
 }
-
 .rotateClockWise {
     animation: rotateSpoolClockWise 0.25s linear infinite;
 }
-
 .rotateAntiClockWise {
     animation: rotateSpoolAntiClockWise 1s linear infinite;
 }

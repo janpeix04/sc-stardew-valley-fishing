@@ -1,28 +1,39 @@
+<template>
+    <img
+        id="fishBitIndicator"
+        :src="imgSrc"
+        alt="fishBitIndicator"
+        ref="fishBitIndicator"
+        :style="inlineStyle"
+    />
+</template>
+
 <script>
-import SmallExclamation from '@/assets/img/small_exclamation.png';
-import { SCALE_FACTOR } from '../../public/globals';
+import smallExclamation from '@/assets/img/small_exclamation.png';
+import { SCALE_FACTOR } from '@/../public/globals';
 
 export default {
+    name: "BaseYellowIndicator",
     props: {
         showTrigger: {
             type: Number,
-            required: true,
+            required: true
         }
     },
     data() {
         return {
             SCALE_FACTOR,
-            imgSrc: SmallExclamation,
+            imgSrc: smallExclamation,
             inlineStyle: 'opacity: 0;'
-        }
+        };
     },
     methods: {
-        recursivelyCheckOpacity(ticks = 0) {
-            const computedStyle = window.getComputedStyle(this.$refs.fishBitIndicator)
+        recursivelyCheckOpacity(ticks=0) {
+            const computedStyle = window.getComputedStyle(this.$refs.fishBitIndicator);
             if ('1' !== computedStyle.opacity) {
                 this.$nextTick(_ => this.recursivelyCheckOpacity(ticks + 1));
             } else {
-                this.inlineStyle = `transform: translateY(-20px) scale(${SCALE_FACTOR}); opacity: 0; transition: transform 1s, opacity 1s;`
+                this.inlineStyle = `transform: translateY(-20px) scale(${SCALE_FACTOR}); opacity: 0; transition: transform 1s, opacity 1s;`;
             }
         }
     },
@@ -32,12 +43,8 @@ export default {
             this.recursivelyCheckOpacity();
         }
     }
-}
+};
 </script>
-
-<template>
-    <img id="fishBitIndicator" :src="imgSrc" alt="Fish bit indicator" ref="fishBitIndicator" :style="inlineStyle">
-</template>
 
 <style scoped>
 #fishBitIndicator {

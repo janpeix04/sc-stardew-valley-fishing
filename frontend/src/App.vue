@@ -1,9 +1,18 @@
+<template>
+  <BaseBackground />
+  <BasePlayer @animation-finished="handleAnimationFinished" @showing-caught-fish="handleShowingCaughtFish"
+    :state="playerState" :captured-fish="capturedFish" />
+  <Hud @set-player-state="handleSetPlayerState" @set-captured-fish="handleSetCapturedFish"
+    v-model:show-caught-fish-trigger="showFishDialog" v-model:enable-action-button-trigger="enableActionButton" />
+</template>
+
 <script>
-import BaseBackground from './components/BaseBackground.vue';
-import BasePlayer from './components/BasePlayer.vue';
+import BaseBackground from './base_components/BaseBackground.vue';
+import BasePlayer from './base_components/BasePlayer.vue';
 import Hud from './components/Hud.vue';
 
 export default {
+  name: "App",
   components: {
     BaseBackground,
     BasePlayer,
@@ -24,31 +33,15 @@ export default {
     handleShowingCaughtFish() {
       this.showFishDialog = true;
     },
-    setPlayerState(state) {
-      this.playerState = state;
+    handleSetCapturedFish(fishId) {
+      this.capturedFish = fishId;
     },
-    setCapturedFish(fishType) {
-      this.capturedFish = fishType;
+    handleSetPlayerState(state) {
+      this.playerState = state;
     }
   }
-}
+};
 </script>
-
-<template>
-  <BaseBackground />
-  <BasePlayer
-    :state="playerState"
-    :captured-fish="capturedFish"
-    @animation-finished="handleAnimationFinished"
-    @showing-caught-fish="handleShowingCaughtFish"
-  />
-  <Hud 
-    v-model:show-yellow-indicator="showFishDialog"
-    v-model:enable-action-button="enableActionButton"
-    @player-state="setPlayerState"
-    @captured-fish="setCapturedFish"
-  />
-</template>
 
 <style>
 img {

@@ -1,37 +1,44 @@
+<template>
+    <div class="letterWrapper">
+        <img v-if="character?.length > 0" :src="smallFontImage" :alt="letterAlt" />
+    </div>
+</template>
+
 <script>
-import SmallFontImage from '@/assets/img/SmallFont.png';
+import smallFontImage from '@/assets/img/SmallFont.png';
 
 export default {
+    name: "BaseLetter",
     props: {
         character: {
             type: String,
-            required: true,
+            required: true
         },
         x: {
             type: Number,
-            required: true,
+            required: true
         },
         y: {
             type: Number,
-            required: true,
+            required: true
         },
         width: {
             type: Number,
-            required: true,
+            required: true
         },
         height: {
             type: Number,
-            required: true,
+            required: true
         },
         verticalOffset: {
             type: Number,
-            required: true,
-        },
+            required: true
+        }
     },
     data() {
         return {
-            smallFontImage: SmallFontImage
-        }
+            smallFontImage
+        };
     },
     computed: {
         letterAlt() {
@@ -44,10 +51,10 @@ export default {
             return `${this.height + this.verticalOffset}px`;
         },
         positionX_Px() {
-            return `${this.x}px`;
+            return `-${this.x}px`;
         },
         positionY_Px() {
-            return `${this.y}px`;
+            return `-${this.y}px`;
         },
         objectPosition() {
             return `${this.positionX_Px} ${this.positionY_Px}`;
@@ -56,14 +63,8 @@ export default {
             return `translateY(${this.verticalOffset}px)`;
         }
     }
-}
+};
 </script>
-
-<template>
-    <div class="letterWrapper">
-        <img v-if="character?.length > 0" :src="smallFontImage" :alt="letterAlt">
-    </div>
-</template>
 
 <style>
 .letterWrapper {
@@ -72,7 +73,6 @@ export default {
     overflow: hidden;
     display: inline-block;
 }
-
 .letterWrapper img {
     position: relative;
     width: 256px;

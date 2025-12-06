@@ -1,32 +1,24 @@
 <script>
-import BaseLetter from './BaseLetter.vue';
+import BaseLetter from '@/base_components/BaseLetter.vue';
 import SmallFont from '@/assets/SmallFont.json';
 
 export default {
+    props: ['character'],
     components: {
         BaseLetter,
     },
-    props: {
-        character: {
-            type: String,
-            required: true
-        }
-    },
-    data() {
-        return {
-            smallFont: SmallFont.Glyphs,
+    computed: {
+        Glyphs() {
+            return SmallFont.Glyphs;
         }
     }
 }
 </script>
 
 <template>
-    <BaseLetter
-        :character="character" 
-        :x="smallFont[this.character].BoundsInTexture.X"
-        :y="smallFont[this.character].BoundsInTexture.Y"
-        :width="smallFont[this.character].BoundsInTexture.Width"
-        :height="smallFont[this.character].BoundsInTexture.Height"
-        :vertical-offset="smallFont[this.character].Cropping.Y"
-    />
+    <BaseLetter :character="character" :x="Glyphs[this.character].BoundsInTexture.X"
+        :y="Glyphs[this.character].BoundsInTexture.Y" :width="Glyphs[this.character].BoundsInTexture.Width"
+        :height="Glyphs[this.character].BoundsInTexture.Height" :vertical-offset="Glyphs[this.character].Cropping.Y" />
 </template>
+
+<style scoped></style>

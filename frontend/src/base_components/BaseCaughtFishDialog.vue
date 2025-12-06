@@ -1,11 +1,30 @@
+<template>
+    <div id="caughtFishDialog">
+        <img id="caughtFishDialogBackground" :src="caughtFishDialog" alt="caughtFishDialogBackground" />
+        <div id="caughtFishDialogFishNameWrapper">
+            <div id="caughtFishDialogFishName">
+                <slot name="fishName" />
+            </div>
+        </div>
+        <BaseFishIcon id="caughtFishDialogFishIcon" :fishType="fishType" />
+        <div id="caughtFishDialogLength">
+            <slot name="fishInchesLabel" />
+        </div>
+        <div id="caughtFishDialogInches">
+            <slot name="fishInches" />
+        </div>
+    </div>
+</template>
+
 <script>
 import BaseFishIcon from './BaseFishIcon.vue';
-import CaughtFishDialog from '@/assets/img/caught_fish_dialog.png';
-import { SCALE_FACTOR } from '../../public/globals';
+import caughtFishDialog from '@/assets/img/caught_fish_dialog.png';
+import { SCALE_FACTOR } from '@/../public/globals';
 
 export default {
+    name: "BaseCaughtFishDialog",
     components: {
-        BaseFishIcon,
+        BaseFishIcon
     },
     props: {
         fishType: {
@@ -15,7 +34,7 @@ export default {
     },
     data() {
         return {
-            caughtFishDialog: CaughtFishDialog,
+            caughtFishDialog,
             SCALE_FACTOR,
             backgroundWidth: '73px',
             backgroundHeight: '49px'
@@ -23,29 +42,11 @@ export default {
     },
     computed: {
         backgroundImage() {
-            return `url(${this.caughtFishDialog})`;
+            return `url(${caughtFishDialog})`;
         }
     }
-}
+};
 </script>
-
-<template>
-    <div id="caughtFishDialog">
-        <img id="caughtFishDialogBackground" :src="caughtFishDialog" alt="Caught fish dialog background">
-        <div id="caughtFishDialogFishNameWrapper">
-            <div id="caughtFishDialogFishName">
-                <slot name="fishName"></slot>
-            </div>
-        </div>
-        <BaseFishIcon id="caughtFishDialogFishIcon" :fish-type="fishType" />
-        <div id="caughtFishDialogLength">
-            <slot name="fishInchesLabel"></slot>
-        </div>
-        <div id="caughtFishDialogInches">
-            <slot name="fishInches"></slot>
-        </div>
-    </div>
-</template>
 
 <style>
 #caughtFishDialog {
@@ -53,16 +54,14 @@ export default {
     top: 250px;
     left: 730px;
 }
-
 #caughtFishDialogBackground {
     position: absolute;
-    transform: scale(v-bin(SCALE_FACTOR));
+    transform: scale(v-bind(SCALE_FACTOR));
     image-rendering: pixelated;
     transform-origin: top left;
     width: v-bind(backgroundWidth);
     height: v-bind(backgroundHeight);
 }
-
 #caughtFishDialogFishNameWrapper {
     display: flex;
     width: calc(v-bind(backgroundWidth) * v-bind(SCALE_FACTOR));
@@ -70,12 +69,10 @@ export default {
     justify-content: center;
     margin-top: 10px;
 }
-
 #caughtFishDialogFishName {
     position: relative;
     filter: invert(1);
 }
-
 #caughtFishDialogFishIcon {
     position: absolute;
     transform: scale(v-bind(SCALE_FACTOR));
@@ -83,14 +80,12 @@ export default {
     top: 96px;
     left: 64px;
 }
-
 #caughtFishDialogLength {
     position: absolute;
     filter: invert(1);
     top: 74px;
     left: 142px;
 }
-
 #caughtFishDialogInches {
     position: absolute;
     filter: invert(1);

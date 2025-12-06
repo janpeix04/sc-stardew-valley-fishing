@@ -1,9 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Stardew Valley Fishing API",
+  "description": "",
   "license": "ISC",
-  "author": "Jan Peix",
+  "author": "",
   "type": "module",
   "main": "app.js",
   "scripts": {
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "ws": "^8.18.3"
   }
 }

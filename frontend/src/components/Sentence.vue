@@ -1,17 +1,12 @@
 <script>
-import BaseSentence from './BaseSentence.vue';
+import BaseSentence from '@/base_components/BaseSentence.vue';
 import Letter from './Letter.vue';
 
 export default {
+    props: ['text'],
     components: {
         BaseSentence,
-        Letter,
-    },
-    props: {
-        text: {
-            type: String,
-            required: true,
-        }
+        Letter
     }
 }
 </script>
@@ -21,3 +16,5 @@ export default {
         <Letter v-for="character in text" :character="character" />
     </BaseSentence>
 </template>
+
+<style scoped></style>
