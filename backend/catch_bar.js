@@ -9,7 +9,7 @@ export default function CatchBar(swappedDirectionCallback) {
     let direction;
 
     const start = () => {
-        lastSwapAt = new Date();
+        lastSwapAt = Date.now();
         lastSwapPosition = CATCH_BAR_INITIAL_POSITION;
         direction = "down";
         swappedDirectionCallback(direction, lastSwapAt, lastSwapPosition);
@@ -19,7 +19,7 @@ export default function CatchBar(swappedDirectionCallback) {
         if (newDirection === direction) return;
 
         lastSwapPosition = computeCatchBarCurrentPosition(direction, lastSwapAt, lastSwapPosition);
-        lastSwapAt = new Date();
+        lastSwapAt = Date.now();
         direction = newDirection;
         swappedDirectionCallback(direction, lastSwapAt, lastSwapPosition);
     };
