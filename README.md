@@ -86,7 +86,7 @@ root/
     ```
 3. Open your browser at `http://localhost:5173/` to play the minigame.
 
-## Discalimer
+## Disclaimer
 - This project is purely **educational** and for portfolio demonstration purposes.
 - It is **not a commercial project** and has **no affilitation with Stardew Valley or ConcernedApe**.
 - Some assets may originate from *Stardew Valley*; they are used strictly for educational purposes and demonstration.
