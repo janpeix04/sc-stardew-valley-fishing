@@ -1,11 +1,3 @@
-<template>
-  <BaseBackground />
-  <BasePlayer @animation-finished="handleAnimationFinished" @showing-caught-fish="handleShowingCaughtFish"
-    :state="playerState" :captured-fish="capturedFish" />
-  <Hud @set-player-state="handleSetPlayerState" @set-captured-fish="handleSetCapturedFish"
-    v-model:show-caught-fish-trigger="showFishDialog" v-model:enable-action-button-trigger="enableActionButton" />
-</template>
-
 <script>
 import BaseBackground from './base_components/BaseBackground.vue';
 import BasePlayer from './base_components/BasePlayer.vue';
@@ -16,32 +8,50 @@ export default {
   components: {
     BaseBackground,
     BasePlayer,
-    Hud,
+    Hud
   },
   data() {
     return {
-      playerState: 'standing',
-      capturedFish: '',
+      playerState: "standing",
+      capturedFish: "",
       showFishDialog: false,
-      enableActionButton: true,
-    }
+      enableActionButton: true
+    };
   },
   methods: {
-    handleAnimationFinished() {
+    onAnimationFinished() {
       this.enableActionButton = true;
     },
-    handleShowingCaughtFish() {
+    onShowingCaughtFish() {
       this.showFishDialog = true;
     },
-    handleSetCapturedFish(fishId) {
+    onSetCapturedFish(fishId) {
       this.capturedFish = fishId;
     },
-    handleSetPlayerState(state) {
+    onSetPlayerState(state) {
       this.playerState = state;
     }
   }
 };
 </script>
+
+<template>
+  <BaseBackground />
+
+  <BasePlayer
+    :state="playerState"
+    :captured-fish="capturedFish"
+    @animation-finished="onAnimationFinished"
+    @showing-caught-fish="onShowingCaughtFish"
+  />
+
+  <Hud
+    v-model:show-caught-fish-trigger="showFishDialog"
+    v-model:enable-action-button-trigger="enableActionButton"
+    @set-player-state="onSetPlayerState"
+    @set-captured-fish="onSetCapturedFish"
+  />
+</template>
 
 <style>
 img {

@@ -1,9 +1,9 @@
-import { fileURLToPath } from 'url';
-import Game from './game.js'
-import cors from 'cors';
-import path from 'path';
-import express from 'express';
-import { WebSocketServer } from 'ws';
+import { fileURLToPath } from "url";
+import Game from "./game.js";
+import cors from "cors";
+import path from "path";
+import express from "express";
+import { WebSocketServer } from "ws";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,60 +13,85 @@ const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 app.use(express.json());
-const publicFolder = path.join(__dirname, '/frontend/public');
+
+const publicFolder = path.join(__dirname, "frontend/public");
 app.use(express.static(publicFolder));
 
 let game = null;
-const wss = new WebSocketServer({port: 8080});
 
-wss.on('connection', (ws) => {
+const wss = new WebSocketServer({ port: 8080 });
+
+wss.on("connection", (ws) => {
     game = Game(ws);
-})
+});
 
-// Implement your endpoints here...
-app.get('/cast_line', (req, res) => {
+const requireGame = (res) => {
+    if (!game) {
+        res.status(503).json({ error: "Game not initialized yet." });
+        return false;
+    }
+    return true;
+};
+
+app.get("/cast_line", (req, res) => {
+    if (!requireGame(res)) return;
+
     const result = game.castLine();
 
     if (result) {
-        res.status(400).json({errorCode : result});
+        res.status(400).json({ errorCode: result });
+        return;
     }
 
-    res.status(200).send();
-})
+    res.sendStatus(200);
+});
 
-app.get('/wait_for_bite', (req, res) => {
+app.get("/wait_for_bite", (req, res) => {
+    if (!requireGame(res)) return;
+
     game.waitForBite()
-        .then(() => res.status(200).send())
-        .catch(errorCode => res.status(400).json({errorCode}));
-})
+        .then(() => res.sendStatus(200))
+        .catch((errorCode) => res.status(400).json({ errorCode }));
+});
 
-app.get('/reel_in', (req, res) => {
+app.get("/reel_in", (req, res) => {
+    if (!requireGame(res)) return;
+
     const result = game.reelIn();
 
-    if (result && result.errorCode) {
+    if (result?.errorCode) {
         res.status(400).json(result);
-    } else if (result && result.difficulty) {
-        res.status(200).json(result);
+        return;
     }
-})
 
-app.get('/get_mini_game_info', (req, res) => {
-    const result = game.getCatchingMiniGameInfo();
-
-    if (result) {
+    if (result?.difficulty) {
         res.status(200).json(result);
+        return;
     }
-})
 
-app.get('/move_catch_bar_up', (req, res) => {
+    res.sendStatus(400);
+});
+
+app.get("/get_mini_game_info", (req, res) => {
+    if (!requireGame(res)) return;
+
+    const info = game.getCatchingMiniGameInfo();
+    res.status(200).json(info);
+});
+
+app.get("/move_catch_bar_up", (req, res) => {
+    if (!requireGame(res)) return;
+
     game.updateCatchBarDirection("up");
-    res.status(200).send();
-})
+    res.sendStatus(200);
+});
 
-app.get('/stop_moving_catch_bar_up', (req, res) => {
+app.get("/stop_moving_catch_bar_up", (req, res) => {
+    if (!requireGame(res)) return;
+
     game.updateCatchBarDirection("down");
-    res.status(200).send();
-})
+    res.sendStatus(200);
+});
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}!`);
