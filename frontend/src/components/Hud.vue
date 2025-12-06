@@ -56,6 +56,56 @@ export default {
             });
 
             if (this.attempts.length >= ATTEMPTS_DIFFICULTY.length) this.actionButtonText = 'retry';
+        },
+        handlePressed() {
+
+        },
+        handleReleased() {},
+        handleClick() {
+            if (this.isMinigameVisible || !this.enableActionButton) return;
+
+            switch (this.actionButtonText) {
+                case 'cast':
+                    this.cast();
+                    break;
+                case 'start':
+                    this.start();
+                    break;
+                case 'retry':
+                    this.retry();
+                    break;
+                default:
+                    break;
+            }
+        },
+        cast() {
+            this.$emit('update:showYellowIndicator', false);
+
+            fetch('http://localhost:8081/cast_line')
+                .then(_ => {
+                    this.$emit("playerState", "casting");
+                    this.$emit("update:enableActionButton", false);
+                    this.actionButtonText = 'start';
+                    this.waitForBite();
+                })
+                .catch(err => console.log('ERROR:', err));
+        },
+        start() {},
+        retry() {},
+        waitForBite() {
+            fetch("http://localhost:8081/wait_for_bite")
+                .then(_ => {
+                    this.showTrigger += 1;
+                    setTimeout(() => {
+                        if (!this.isMinigameVisible) {
+                            this.$emit('playerState', 'reeling_in');
+                            this.$emit('capturedFish', '');
+                            this.actionButtonText = 'cast';
+                            this.$emit('update:enableActionButton', false);
+                        }
+                    }, PULL_ROD_TIMEOUT_MS);
+                })
+                .catch(err => console.log(err));
         }
     }
 }

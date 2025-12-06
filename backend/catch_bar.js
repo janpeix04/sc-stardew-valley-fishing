@@ -5,7 +5,7 @@ import {
 
 export default function CatchBar(swappedDirectionCallback) {
     let lastSwapAt;
-    let lastSwapPosition:;
+    let lastSwapPosition;
     let direction;
 
     const start = () => {

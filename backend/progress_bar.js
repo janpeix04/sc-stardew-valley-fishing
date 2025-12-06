@@ -62,13 +62,13 @@ export default function ProgressBar(fishSpeed, finishCallback) {
         }, PROGRESS_BAR_TICK_FREQUENCY); 
     };
 
-    const fishSwappedDirection = (newFishDirection, newFishLastSwapAt, newFishLastSwapPosition) {
+    const fishSwappedDirection = (newFishDirection, newFishLastSwapAt, newFishLastSwapPosition) => {
         fishDirection = newFishDirection;
         fishLastSwapAt = newFishLastSwapAt;
         fishLastSwapPosition = newFishLastSwapPosition;
     };
 
-    const catchBarSwappedDirection = (newCatchBarDirection, newCatchBarLastSwapAt, newCatchBarLastSwapPosition) {
+    const catchBarSwappedDirection = (newCatchBarDirection, newCatchBarLastSwapAt, newCatchBarLastSwapPosition) => {
         catchBarDirection = newCatchBarDirection;
         catchBarLastSwapAt = newCatchBarLastSwapAt;
         catchBarLastSwapPosition = newCatchBarLastSwapPosition;
@@ -78,7 +78,7 @@ export default function ProgressBar(fishSpeed, finishCallback) {
         return {
             direction,
             lastSwapAt,
-            lastSwapPosition
+            lastSwapPosition,
             state
         }
     };

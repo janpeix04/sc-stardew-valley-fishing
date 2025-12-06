@@ -1,6 +1,6 @@
 import CatchBar from './catch_bar.js';
 import Fish from './fish.js';
-import ProgressBar from '.progress_bar.js';
+import ProgressBar from './progress_bar.js';
 import { DIFFICULTY_TO_FISH_SPEED } from '../frontend/public/globals.js';
 
 export default function CatchingMinigame(finishCallback) {
@@ -22,7 +22,7 @@ export default function CatchingMinigame(finishCallback) {
     }
 
     const getInfo = () => {
-        return {´
+        return {
             progressBarInfo: progressBar.getInfo(),
             catchBarInfo: catchBar.getInfo(),
             fishInfo: fish.getInfo()
