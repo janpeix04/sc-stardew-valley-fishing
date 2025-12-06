@@ -1,14 +1,19 @@
+<template>
+    <img id="fish" :src="fishSrc" alt="fish" :style="innerStyle" ref="fish" />
+</template>
+
 <script>
-import Fish from '@/assets/img/fish.png';
-import FishLegend from '@/assets/img/fish_legend.png';
-import { 
-    SCALE_FACTOR, 
-    FISH_MAX_POS, 
-    FISH_PADDING_TOP, 
-    computeFishCurrentPosition 
-} from '../../public/globals';
+import fish from '@/assets/img/fish.png';
+import fishLegend from '@/assets/img/fish_legend.png';
+import {
+    FISH_MAX_POS,
+    FISH_PADDING_TOP,
+    SCALE_FACTOR,
+    computeFishCurrentPosition
+} from '@/../public/globals';
 
 export default {
+    name: "BaseFish",
     props: {
         direction: {
             type: String,
@@ -16,11 +21,11 @@ export default {
         },
         lastSwapPosition: {
             type: Number,
-            default: null,
+            default: null
         },
         lastSwapAt: {
             type: Number,
-            default: null,
+            default: null
         },
         speed: {
             type: Number,
@@ -33,16 +38,16 @@ export default {
     },
     data() {
         return {
-            fish: Fish,
-            fishLegend: FishLegend,
+            fish,
+            fishLegend,
             SCALE_FACTOR,
             isAnimated: false,
             top: null,
-            correctedLastSwapPosition: null,
-        }
+            correctedLastSwapPosition: null
+        };
     },
     methods: {
-        getCurrentFishPosition() {
+        getCurrentFishTop() {
             const top = parseInt(computeFishCurrentPosition(this.direction, this.lastSwapAt, this.lastSwapPosition, this.speed));
             return top;
         },
@@ -82,25 +87,21 @@ export default {
             return result;
         },
         fishSrc() {
-            return this.isLegend ? this.fishLegend : this.fish;
+            return this.isLegend ? fishLegend : fish;
         }
     },
     watch: {
         lastSwapAt(newValue) {
             if (newValue) {
-                this.correctedLastSwapPosition = this.getCurrentFishPosition();
+                this.correctedLastSwapPosition = this.getCurrentFishTop();
                 this.top = this.correctedLastSwapPosition;
                 this.isAnimated = false;
                 this.recursivelyCheckTop(this.finalTop());
             }
         }
     }
-}
+};
 </script>
-
-<template>
-    <img id="fish" :src="fishSrc" alt="Fish" :style="innerStyle" ref="fish">
-</template>
 
 <style scoped>
 #fish {

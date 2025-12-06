@@ -1,3 +1,7 @@
+<template>
+    <div id="progressBar" :style="innerStyle" ref="progressBar" />
+</template>
+
 <script>
 import {
     SCALE_FACTOR,
@@ -6,7 +10,7 @@ import {
     PROGRESS_BAR_INITIAL_POSITION,
     computeProgressBarCurrentPosition,
     calculateAnimationDuration
-} from '../../public/globals';
+} from '@/../public/globals';
 
 const PROGRESS_BAR_PADDING_TOP = 6;
 const PROGRESS_BAR_MIN_COLOR = [255, 0, 0];
@@ -15,18 +19,19 @@ const PROGRESS_BAR_MAX_COLOR = [0, 255, 0];
 const MAX_ANIMATION_DURATION = calculateAnimationDuration(0, PROGRESS_BAR_MAX_POS, PROGRESS_BAR_SPEED);
 
 export default {
+    name: "BaseProgressBar",
     props: {
         direction: {
             type: String,
-            default: null,
+            default: null
         },
         lastSwapPosition: {
-            tyoe: Number,
-            default: null,
+            type: Number,
+            default: null
         },
         lastSwapAt: {
-            tyoe: Number,
-            default: null,
+            type: Number,
+            default: null
         }
     },
     data() {
@@ -35,13 +40,13 @@ export default {
             height: PROGRESS_BAR_INITIAL_POSITION,
             isAnimated: false,
             correctedLastSwapPosition: null
-        }
+        };
     },
     methods: {
         finalHeight() {
             return this.height * SCALE_FACTOR;
         },
-        recursivelyCheckHeight(expectedValue, ticks = 0) {
+        recursivelyCheckHeight(expectedValue, ticks=0) {
             const expectedValueStr = `${expectedValue}px`;
             const computedStyle = window.getComputedStyle(this.$refs.progressBar);
             if (expectedValueStr !== computedStyle.height) {
@@ -70,7 +75,6 @@ export default {
             let mid = PROGRESS_BAR_MAX_POS / 2;
             let t;
             let startColor, endColor;
-
             if (this.height <= mid) {
                 t = this.height / mid;
                 startColor = PROGRESS_BAR_MIN_COLOR;
@@ -104,23 +108,17 @@ export default {
             }
         }
     }
-}
+};
 </script>
-
-<template>
-    <div id="progressBar" :style="innerStyle" ref="progressBar"></div>
-</template>
 
 <style>
 @keyframes backgroundColorRedToGreen {
     0% {
         background-color: rgb(255, 0, 0);
     }
-
     50% {
         background-color: rgb(255, 255, 0);
     }
-
     100% {
         background-color: rgb(0, 255, 0);
     }
@@ -130,11 +128,9 @@ export default {
     0% {
         background-color: rgb(0, 255, 0);
     }
-
     50% {
         background-color: rgb(255, 255, 0);
     }
-
     100% {
         background-color: rgb(255, 0, 0);
     }

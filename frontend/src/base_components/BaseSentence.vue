@@ -1,11 +1,11 @@
 <template>
     <div class="sentence">
-        <slot></slot>
+        <slot />
     </div>
 </template>
 
 <style>
-.sentece {
+.sentence {
     display: flex;
     gap: 3px;
 }
