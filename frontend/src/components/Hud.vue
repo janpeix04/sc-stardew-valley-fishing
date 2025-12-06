@@ -31,5 +31,60 @@ export default {
         }
     },
     emits: ['playerState', 'capturedFish', 'update:showYellowIndicator', 'update:enableActionButton'],
+    data() {
+        return {
+            actionButtonText: 'cast',
+            currentDifficulty: 'low',
+            isMinigameVisible: false,
+            attempts: [],
+            showTrigger: 0,
+        }
+    },
+    methods: {
+        handleMinigameFinished(isCaptured) {
+            this.isMinigameVisible = false;
+            this.$emit('playerState', 'reeling_in');
+            
+            const fishType = isCaptured ? DIFFICULTY_TO_FISH_TYPE[this.currentDifficulty] : '';
+            this.$emit('capturedFish', fishType);
+
+            this.actionButtonText = 'cast';
+            this.$emit('update:enableActionButton', false);
+            this.attempts.push({
+                difficulty: this.currentDifficulty,
+                successful: isCaptured
+            });
+
+            if (this.attempts.length >= ATTEMPTS_DIFFICULTY.length) this.actionButtonText = 'retry';
+        }
+    }
 }
 </script>
+
+<template>
+    <Minigame 
+        :visible="isMinigameVisible" 
+        :difficulty="currentDifficulty" 
+        @finished="handleMinigameFinished"
+    />
+
+    <BaseCaptures>
+        <BaseAttempt 
+            v-for="attempt in attempts"
+            :difficulty="attempt.difficulty"
+            :successful="attempt.successful"
+        />
+    </BaseCaptures>
+
+    <CaughtFishDialog :difficulty="currentDifficulty" />
+
+    <BaseYellowIndicator :show-trigger="showTrigger" />
+
+    <BaseActionButton 
+        :text="actionButtonText"
+        :disabled="!enableActionButton"
+        @pressed="handlePressed"
+        @released="handleReleased"
+        @click="handleClick"
+    />
+</template>
